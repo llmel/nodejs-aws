@@ -1,0 +1,23 @@
+{
+  "name": "nodejs_aws",
+  "version": "1.0.0",
+  "description": "Projeto para aprendizado de continuous deployment na Amazon Web Services (AWS).",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/llmel/nodejs-aws.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/llmel/nodejs-aws/issues"
+  },
+  "homepage": "https://github.com/llmel/nodejs-aws#readme"
+}
