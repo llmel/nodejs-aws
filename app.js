@@ -1,61 +1,41 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 
-app.get('/', (req , res) => res.send('Hello World!'));
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
-app.listen(port, () => console.log(`App de exemplo escutando na porta ${port}!`));
+var app = express();
 
-app.use(express.static('public'));
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
-// Montagem do módulo roteador no aplicativo principal
-var first_route = require('./routes/first_routes');
-app.use('/primeiras_rotas', first_route);
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota com parâmetros na URI - Desta forma, ele retorna um JSON
-app.get('/users/:nome', (req,res) => {
-	res.send(req.params);
-})
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
-// Usando o argumento next() para controlar a função de callback na manipulação da rota
-app.get('/exemplo', function (req, res, next) {
-	console.log('A resposta será enviada pela próxima função de callback...');
-	next();
-}, function (req, res) {
-	res.send('Olá, respondido pela função 2 do endpoint');
-})
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
 
-// Usando métodos já escritos como respostas ao endpoint
-var callback0 = function (req, res, next) {
-	console.log('Callback0');
-	next();
-}
-var callback1 = function (req, res, next) {
-	console.log('Callback1');
-	next();
-}
-var callback2 = function (req, res, next) {
-	res.send('Olá, respondido da função de callback2');
-}
-app.get('/exemplo-metodo', [callback0,callback1,callback2]);
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-// Combinando funções independentes e funções dentro do endpoint
-app.get('/exemplo-combinado', [callback0,callback1], function (req, res, next) {
-	console.log('A resposta será enviada pela próxima função de callback...');
-	next();
-}, function (req, res) {
-	res.send('Olá, respondido pela função de dentro do endpoint,após duas funções independentes');
-})
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
-// Rota padrão, com vários métodos dentro da rota
-app.route('/livro')
-	.get(function (req, res) {
-		res.send('Get um livro aleatório');
-	})
-	.post(function (req, res) {
-		res.send('Add um livro');
-	})
-	.put(function (req, res) {
-		res.send('Update o livro');
-	})
-	
+module.exports = app;
